@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      namespace :tin_validation do
+      namespace :tin_validations do
         post :basic
       end
     end
