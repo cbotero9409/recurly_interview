@@ -20,7 +20,15 @@ class TinValidations::ExternalValidationService
       @errors << 'Invalid input'
       return { valid: false, errors: @errors }
     end
-    
+
+    return build_response
+
+  rescue => e
+    @errors << "main_validation error: #{e}"
+    return { validation: false, errors: @errors }
+  end
+
+  def build_response
     response = URI.open(@url)
     document = Nokogiri::XML(response)
     status = document.xpath("//status").text == 'Active'
@@ -39,7 +47,7 @@ class TinValidations::ExternalValidationService
         registered: valid
       }
     }
-    
+
   rescue OpenURI::HTTPError => e
     error = if e.message == "404 Not Found"
               "Bussiness is not registered"
@@ -52,7 +60,7 @@ class TinValidations::ExternalValidationService
     return { validation: false, errors: error }
 
   rescue => e
-    @errors << "main_validation error: #{e}"
+    @errors << "build_response error: #{e}"
     return { validation: false, errors: @errors }
   end
 
