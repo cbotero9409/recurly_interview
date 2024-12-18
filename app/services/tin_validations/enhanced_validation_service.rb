@@ -15,8 +15,16 @@ class TinValidations::EnhancedValidationService
     if @number.blank? || @number.length != 11
       @errors << 'Invalid input'
       return { valid: false, errors: @errors }
-    end
+    end    
 
+    return { valid: (calculation_algorithm % 89 == 0), number: @number }
+
+  rescue => e
+    @errors << "main_validation error: #{e}"
+    return { validation: false, errors: @errors }
+  end
+
+  def calculation_algorithm
     sum = (@number[0].to_i - 1) * 10
     other_digits = @number[1..-1].split('')
     i = 1
@@ -24,11 +32,10 @@ class TinValidations::EnhancedValidationService
       sum += (digit.to_i * i)
       i += 2 
     end
-
-    return { valid: (sum % 89 == 0), number: @number }
+    return sum
 
   rescue => e
-    @errors << "main_validation error: #{e}"
+    @errors << "calculation_algorithm error: #{e}"
     return { validation: false, errors: @errors }
   end
 
