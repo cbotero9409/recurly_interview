@@ -12,7 +12,6 @@ Rails.application.routes.draw do
     namespace :v1 do
       namespace :tin_validations do
         post :basic
-        post :enhanced
       end
     end
   end
