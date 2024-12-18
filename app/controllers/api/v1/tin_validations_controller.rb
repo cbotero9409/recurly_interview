@@ -1,6 +1,7 @@
 class Api::V1::TinValidationsController < ApplicationController
   COUNTRIES = %w(AU CA IN)
-  FORMATS = { AU: /^(\d{9}|\d{11})$/, CA: /^\d{9}(RT0001)?$/, IN: 'a' }
+  FORMATS = { AU: /^(\d{9}|\d{11})$/, CA: /^\d{9}(RT0001)?$/, IN: /^\d{2}[0-9|A-Z]{10}\d[A-Z]\d$/ }
+  # If add many more countries we need to create a table and save this data in a db
 
   def basic
     @errors = []
@@ -31,9 +32,9 @@ class Api::V1::TinValidationsController < ApplicationController
     return { valid: false } unless valid_number?
 
     case @country
-    when 'AU' then au_format
-    when 'CA' then ca_format
-    when 'IN' then in_format
+    when 'AU' then australian_format
+    when 'CA' then canadian_format
+    when 'IN' then indian_format
     end
 
   rescue => e
@@ -41,7 +42,7 @@ class Api::V1::TinValidationsController < ApplicationController
     return { valid: false }
   end
 
-  def au_format
+  def australian_format
     if @number.length == 9
       @number = "#{@number[0..2]} #{@number[3..5]} #{@number[6..8]}"
       tin_type = 'au_acn'
@@ -52,16 +53,24 @@ class Api::V1::TinValidationsController < ApplicationController
     return { valid: true, tin_type: tin_type, formatted_tin: @number }
 
   rescue => e
-    @errors << "au_format error: #{e}"
+    @errors << "australian_format error: #{e}"
     return { valid: false }
   end
 
-  def ca_format
+  def canadian_format
     @number += 'RT0001' if @number.length == 9 
     return { valid: true, tin_type: 'ca_gst', formatted_tin: @number }
 
   rescue => e
-    @errors << "ca_format error: #{e}"
+    @errors << "canadian_format error: #{e}"
+    return { valid: false }
+  end
+
+  def indian_format
+    return { valid: true, tin_type: 'in_gst', formatted_tin: @number }
+
+  rescue => e
+    @errors << "indian_format error: #{e}"
     return { valid: false }
   end
 
