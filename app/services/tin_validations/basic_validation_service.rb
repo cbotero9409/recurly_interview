@@ -1,7 +1,7 @@
 class TinValidations::BasicValidationService
   COUNTRIES = %w(AU CA IN)
   FORMATS = { AU: /^(\d{9}|\d{11})$/, CA: /^\d{9}(RT0001)?$/, IN: /^\d{2}[0-9|A-Z]{10}\d[A-Z]\d$/ }
-  # If add many more countries we need to create a table and save this data in a db
+  # If add many more countries we need to create a table and save this data in a db 
 
   def initialize(country, number)
     @errors = []
