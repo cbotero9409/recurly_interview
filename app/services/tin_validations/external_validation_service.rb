@@ -3,8 +3,6 @@ class TinValidations::ExternalValidationService
   require 'open-uri'
   require 'nokogiri'
 
-  URL_VALIDATION = 
-
   def initialize(abn)
     @errors = []
     @number = abn.to_s.gsub(/\s/, '')
@@ -22,7 +20,7 @@ class TinValidations::ExternalValidationService
       @errors << 'Invalid input'
       return { valid: false, errors: @errors }
     end
-
+    
     response = URI.open(@url)
     document = Nokogiri::XML(response)
     status = document.xpath("//status").text == 'Active'
@@ -41,6 +39,17 @@ class TinValidations::ExternalValidationService
         registered: valid
       }
     }
+    
+  rescue OpenURI::HTTPError => e
+    error = if e.message == "404 Not Found"
+              "Bussiness is not registered"
+            elsif e.message == "500 Internal Server Error"
+              "Registration API could not be reached"
+            else
+              e
+            end
+    @errors << error
+    return { validation: false, errors: error }
 
   rescue => e
     @errors << "main_validation error: #{e}"
