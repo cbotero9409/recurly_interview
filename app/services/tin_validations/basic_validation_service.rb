@@ -6,7 +6,7 @@ class TinValidations::BasicValidationService
   def initialize(country, number)
     @errors = []
     @country = country.upcase
-    @number = number.gsub(/\s/, '')
+    @number = number.to_s.gsub(/\s/, '')
   end
 
   def validate
