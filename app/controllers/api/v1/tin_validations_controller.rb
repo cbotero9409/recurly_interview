@@ -1,4 +1,5 @@
 class Api::V1::TinValidationsController < ApplicationController
+
   def basic
     result = TinValidations::BasicValidationService.new(params[:country], params[:number]).validate
     render json: result, status: :ok
@@ -15,7 +16,7 @@ class Api::V1::TinValidationsController < ApplicationController
     render json: { validation: false, error: "Enhanced validation error: #{e}" }, status: :unprocessable_entity
   end
 
-  def external
+  def external    
     result = TinValidations::ExternalValidationService.new(params[:abn]).validate
     render json: result, status: :ok
 

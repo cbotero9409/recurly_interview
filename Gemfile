@@ -20,3 +20,5 @@ group :development, :test do
   gem 'rspec-rails', '~> 6.1.0'
   gem 'pry-rails', '~> 0.3.4'
 end
+
+gem 'nokogiri', '~> 1.6', '>= 1.6.8'
