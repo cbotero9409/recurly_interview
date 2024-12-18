@@ -18,7 +18,7 @@ class TinValidations::BasicValidationService
   def main_validation
     if !COUNTRIES.include?(@country) || @number.blank?
       @errors << 'Invalid inputs'
-      return false
+      return { valid: false, errors: @errors }
     end
     
     return { valid: false, errors: @errors } unless valid_number?

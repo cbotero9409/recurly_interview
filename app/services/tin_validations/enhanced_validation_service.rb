@@ -14,7 +14,7 @@ class TinValidations::EnhancedValidationService
   def main_validation
     if @number.blank? || @number.length != 11
       @errors << 'Invalid input'
-      return false
+      return { valid: false, errors: @errors }
     end
 
     sum = (@number[0].to_i - 1) * 10
