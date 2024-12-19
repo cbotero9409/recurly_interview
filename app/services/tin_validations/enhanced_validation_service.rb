@@ -1,5 +1,4 @@
 class TinValidations::EnhancedValidationService
-
   def initialize(number)
     @errors = []
     @number = number.to_s.gsub(/\s/, '')
@@ -12,11 +11,13 @@ class TinValidations::EnhancedValidationService
   private
 
   def main_validation
+    # Basic validation for the input to avoid executing the whole validation if the input is invalid
     if @number.blank? || @number.length != 11
       @errors << 'Invalid input'
       return { valid: false, errors: @errors }
     end    
 
+    # Validates ABN number with algorithm and return the key :valid with true or false
     return { valid: (calculation_algorithm % 89 == 0), number: @number }
 
   rescue => e
@@ -24,6 +25,7 @@ class TinValidations::EnhancedValidationService
     return { validation: false, errors: @errors }
   end
 
+  # This method makes the calculations based on the government website for ABN validity
   def calculation_algorithm
     sum = (@number[0].to_i - 1) * 10
     other_digits = @number[1..-1].split('')
@@ -38,5 +40,4 @@ class TinValidations::EnhancedValidationService
     @errors << "calculation_algorithm error: #{e}"
     return { validation: false, errors: @errors }
   end
-
 end

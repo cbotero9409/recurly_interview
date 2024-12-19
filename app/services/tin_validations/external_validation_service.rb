@@ -1,7 +1,6 @@
 class TinValidations::ExternalValidationService
-
-  require 'open-uri'
-  require 'nokogiri'
+  require 'open-uri'  # Library to open an URL from the code
+  require 'nokogiri'  # Library of a Gem to manage XML formats and files
 
   def initialize(abn)
     @errors = []
@@ -16,11 +15,13 @@ class TinValidations::ExternalValidationService
   private
 
   def main_validation
+    # Basic validation for the input to avoid executing the whole validation if the input is invalid
     if @number.blank? || @number.length != 11
       @errors << 'Invalid input'
       return { valid: false, errors: @errors }
     end
 
+    # Return the response with a hash build based in the external API validation
     return build_response
 
   rescue => e
@@ -30,12 +31,25 @@ class TinValidations::ExternalValidationService
 
   def build_response
     response = URI.open(@url)
-    document = Nokogiri::XML(response)
+    # Manage easily the XML format with Nokogiri gem
+    document = Nokogiri::XML(response)  
     status = document.xpath("//status").text == 'Active'
     valid = document.xpath("//goodsAndServicesTax").text == 'true'
     name = document.xpath("//organisationName").text
     formatted_address = "#{document.xpath("//stateCode").text} #{document.xpath("//postcode").text}"
 
+    # Example of the expected output
+    # {
+    #   "business_registration": {
+    #     "number": "10120000004",
+    #     "name": "Example Company Pty Ltd",
+    #     "address": "NSW 2000"
+    #   },
+    #   "validity": {
+    #     "valid": true,
+    #     "registered": true
+    #   }
+    # }
     return {  
       business_registration: {
         number: @number,
@@ -48,6 +62,7 @@ class TinValidations::ExternalValidationService
       }
     }
 
+  # Manage the request errors for the URI.open(@url)
   rescue OpenURI::HTTPError => e
     error = if e.message == "404 Not Found"
               "Bussiness is not registered"
@@ -63,5 +78,4 @@ class TinValidations::ExternalValidationService
     @errors << "build_response error: #{e}"
     return { validation: false, errors: @errors }
   end
-
 end

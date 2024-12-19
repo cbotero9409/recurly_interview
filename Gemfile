@@ -18,7 +18,8 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
   gem 'rspec-rails', '~> 6.1.0'
-  gem 'pry-rails', '~> 0.3.4'
+  gem 'pry-rails', '~> 0.3.4' # Gem for debugging
 end
 
+# Gem to manage easily XML and HTML
 gem 'nokogiri', '~> 1.6', '>= 1.6.8'
