@@ -72,7 +72,7 @@ class TinValidations::ExternalValidationService
               e
             end
     @errors << error
-    return { validation: false, errors: error }
+    return { validation: false, error: error, server_status: e.message }
 
   rescue => e
     @errors << "build_response error: #{e}"
